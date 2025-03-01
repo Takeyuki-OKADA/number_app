@@ -21,6 +21,7 @@ Markdown
 MarkupSafe
 numpy
 oauthlib
+opencv-python
 pillow
 protobuf
 PyYAML
