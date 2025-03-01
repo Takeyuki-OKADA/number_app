@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Number Classifier</title>
+    <link rel="stylesheet" href="./static/stylesheet.css">
+    <script>
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                console.log("ファイル選択:", file.name);  // デバッグ用
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+            document.getElementById('submitButton').disabled = false;
+            document.getElementById('result').innerText = '';
+        }
+
+        function disableButton() {
+            console.log("送信開始");  // デバッグ用
+            const button = document.getElementById('submitButton');
+            button.disabled = true;
+            button.value = '考え中...';
+        }
+    </script>
+</head>
+<body>
+    <header>   
+        <a class="header-logo" href="#">読むぞ！手書き数字AI</a>
+    </header>
+
+    <div class="main">    
+        <h2> 生まれたてのAIが送信された画像の数字を識別できるかもしれません</h2>
+        <p>1桁の数字の画像を送信してください</p>
+        <form method="POST" enctype="multipart/form-data" onsubmit="disableButton()">
+            <input id="fileInput" class="file_choose" type="file" name="file" onchange="previewImage(event)">
+            <br>
+            <img id="imagePreview" style="display:none; max-width: 200px; border-radius: 10px; margin: 10px auto;" alt="Image Preview">
+            <br>
+            <input id="submitButton" class="btn" value="submit!" type="submit" disabled>
+        </form>
+        <div id="result" class="answer" style="font-size: 24px; font-weight: bold;">{{answer}}</div>
+    </div>
+
+    <footer>    
+        <small>&copy; 2025 岡田製作所</small>   
+    </footer>
+</body>
+</html>
