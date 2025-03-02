@@ -141,55 +141,62 @@ def upload_file():
     if request.method == "GET":
         return render_template("index.html", answer="", image_path=None)
 
-    if request.method == "POST":
-        logger.info("POSTリクエスト受信（推論開始）")
+if request.method == "POST":
+    logger.info("POSTリクエスト受信（推論開始）")
 
-        if "file" not in request.files:
-            return render_template("index.html", answer="ファイルがありません", image_path=None)
+    if "file" not in request.files:
+        return render_template("index.html", answer="ファイルがありません", image_path=None)
 
-        file = request.files["file"]
-        if file.filename == "":
-            return render_template("index.html", answer="ファイルがありません", image_path=None)
+    file = request.files["file"]
+    if file.filename == "":
+        return render_template("index.html", answer="ファイルがありません", image_path=None)
 
-        clean_name = re.sub(r"[^\w\d.]", "_", file.filename).lower()
-        file_path = os.path.join("input_images", clean_name)
-        file.save(file_path)
+    clean_name = clean_filename(file.filename)
+    file_path = os.path.join("input_images", clean_name)
+    file.save(file_path)
 
-        img = cv2.imread(file_path)
-        if img is None:
-            logger.error("アップロード画像の読み込みに失敗")
-            return render_template("index.html", answer="画像の読み込みに失敗しました", image_path=None)
+    img = cv2.imread(file_path)
+    if img is None:
+        logger.error("アップロード画像の読み込みに失敗")
+        return render_template("index.html", answer="画像の読み込みに失敗しました", image_path=None)
 
-        processed_img, processed_image_name = preprocess_image(img, clean_name)
-        if processed_img is None:
-            return render_template("index.html", answer="画像の前処理に失敗しました", image_path=None)
+    processed_img, processed_image_name = preprocess_image(img, clean_name)
+    if processed_img is None:
+        return render_template("index.html", answer="画像の前処理に失敗しました", image_path=None)
 
-        img_array = processed_img / 255.0
-        img_array = np.expand_dims(img_array, axis=0)
-        img_array = np.expand_dims(img_array, axis=-1)
+    img_array = processed_img / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
+    img_array = np.expand_dims(img_array, axis=-1)
 
-        try:
-            result = model.predict(img_array)
-            probabilities = tf.nn.softmax(result[0]).numpy()
-            top1_idx = np.argmax(probabilities)
-            top2_idx = np.argsort(probabilities)[-2]
-            top1_prob = probabilities[top1_idx] * 100
-            top2_prob = probabilities[top2_idx] * 100
+    try:
+        result = model.predict(img_array)
+        probabilities = tf.nn.softmax(result[0]).numpy()
 
-            if top1_prob > 20.0:
-                pred_answer = f"これは {classes[top1_idx]} です<br>確率: {top1_prob:.2f}%"
-            elif 15.0 < top1_prob <= 20.0:
-                pred_answer = f"もしかして {classes[top1_idx]} ですか？<br>{classes[top1_idx]} ({top1_prob:.2f}%) と {classes[top2_idx]} ({top2_prob:.2f}%) で悩んでいます"
-            else:
-                pred_answer = "ちゃんと読めませんでした<br>もう一度お願いします"
+        # 偏差値を計算
+        mean_prob = np.mean(probabilities)
+        std_prob = np.std(probabilities)
+        deviation_scores = (probabilities - mean_prob) / std_prob * 10 + 50
+        adjusted_scores = deviation_scores * 1.25  # 1.25倍に調整
 
-            logger.info(f"推論結果: {classes[top1_idx]} (確率: {top1_prob:.4f}%), 2位: {classes[top2_idx]} (確率: {top2_prob:.4f}%)")
+        # 上位2クラスを取得
+        top1_idx = np.argmax(adjusted_scores)
+        top2_idx = np.argsort(adjusted_scores)[-2]
+        top1_score = adjusted_scores[top1_idx]
+        top2_score = adjusted_scores[top2_idx]
 
-            return render_template("index.html", answer=pred_answer, image_path=f"/processed/{processed_image_name}")
+        # 表記変更（確率 → 自信度）
+        if top1_score > 60.0:
+            pred_answer = f"これは {classes[top1_idx]} です<br>自信度: {top1_score:.2f}%"
+        elif 50.0 < top1_score <= 60.0:
+            pred_answer = f"もしかして {classes[top1_idx]} ですか？<br>{classes[top1_idx]} ({top1_score:.2f}%) と {classes[top2_idx]} ({top2_score:.2f}%) で悩んでいます"
+        else:
+            pred_answer = "ちゃんと読めませんでした<br>もう一度お願いします"
 
-        except Exception as e:
-            logger.error(f"モデルの推論中にエラーが発生: {e}")
-            return render_template("index.html", answer="推論に失敗しました", image_path=None)
+        return render_template("index.html", answer=pred_answer, image_path=f"/processed/{os.path.basename(processed_image_name)}")
+
+    except Exception as e:
+        logger.error(f"モデルの推論中にエラーが発生: {e}")
+        return render_template("index.html", answer="推論に失敗しました", image_path=None)
 
 @app.route("/processed/<filename>")
 def get_processed_image(filename):
