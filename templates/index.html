@@ -50,7 +50,8 @@
                 {% if processing %}disabled{% endif %}>
         </form>
 
-        <div id="result" class="answer" style="font-size: 24px; font-weight: bold;">{{ answer }}</div>
+        <div id="result" class="answer" style="font-size: 24px; font-weight: bold;">{{ answer | safe }}</div>
+
     </main>
 
     <footer>    

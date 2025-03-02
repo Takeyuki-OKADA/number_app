@@ -135,9 +135,9 @@ def upload_file():
 
             # ✅ 判定結果の表示処理
             if top1_prob > 20.0:
-                pred_answer = f"これは {classes[top1_idx]} です\n確率: {top1_prob:.4f}%"
+                pred_answer = f"これは {classes[top1_idx]} です\n確率: {top1_prob:.2f}%"
             elif 15.0 < top1_prob <= 20.0:
-                pred_answer = f"もしかして {classes[top1_idx]} ですか？\n{classes[top1_idx]} ({top1_prob:.4f}%) と {classes[top2_idx]} ({top2_prob:.4f}%) で悩んでいます"
+                pred_answer = f"もしかして {classes[top1_idx]} ですか？\n{classes[top1_idx]} ({top1_prob:.2f}%) と {classes[top2_idx]} ({top2_prob:.2f}%) で悩んでいます"
             else:
                 pred_answer = "ちゃんと読めませんでした\nもう一度お願いします"
 
