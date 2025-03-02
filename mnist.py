@@ -40,7 +40,7 @@ logger.info("モデルロード完了")
 def clean_filename(filename):
     return re.sub(r"[^\w\d.]", "_", filename).lower()
 
-# ✅ 画像の前処理関数（**追加**）
+# ✅ 画像の前処理関数
 def preprocess_image(img, file_name):
     if img is None:
         logger.error("preprocess_image: 入力画像が None です！")
@@ -141,7 +141,10 @@ def upload_file():
             else:
                 pred_answer = "ちゃんと読めませんでした\nもう一度お願いします"
 
-            # ✅ 判定結果をログに出力
+            # ✅ 改行を <br> に変換（Webで正しく表示するため）
+            pred_answer = pred_answer.replace("\n", "<br>")
+
+            # ✅ 判定結果をログに出力（**インデント修正済み**）
             logger.info(f"推論結果: {pred_answer} (確率: {top1_prob:.4f}%)")
 
         except Exception as e:

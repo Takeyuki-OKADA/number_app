@@ -1,6 +1,6 @@
-/* ƒwƒbƒ_[‘S‘Ì‚ğ’†‰›Šñ‚¹ */
+/* ï¿½wï¿½bï¿½_ï¿½[ï¿½Sï¿½Ì‚ğ’†‰ï¿½ï¿½ï¿½ */
 header {
-    background-color: #323db4;
+    background-color: #28cb69;
     height: 60px;
     margin: 0;
     display: flex;
@@ -9,15 +9,24 @@ header {
     text-align: center;
 }
 
-/* ƒwƒbƒ_[ƒƒS‚ğ’†‰›‚É */
+/* ï¿½wï¿½bï¿½_ï¿½[ï¿½ï¿½ï¿½Sï¿½ğ’†‰ï¿½ï¿½ï¿½ */
 .header-logo {
     color: #fff;
     font-size: 25px;
     text-align: center;
     margin: 0;
+    text-decoration: none; /* ä¸‹ç·šã‚’æ¶ˆã™ï¼ˆå¿…è¦ãªã‚‰ï¼‰ */
 }
 
-/* ƒƒCƒ“ƒRƒ“ƒeƒ“ƒc‘S‘Ì‚ğ’†‰›‘µ‚¦ */
+/* ãƒªãƒ³ã‚¯ã®çŠ¶æ…‹ã«é–¢ã‚ã‚‰ãšè‰²ã‚’ç™½ã«å›ºå®š */
+.header-logo:visited,
+.header-logo:link,
+.header-logo:hover,
+.header-logo:active {
+    color: #fff;
+}
+
+/* ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½Rï¿½ï¿½ï¿½eï¿½ï¿½ï¿½cï¿½Sï¿½Ì‚ğ’†‰ï¿½ï¿½ï¿½ï¿½ï¿½ */
 .main {
     height: auto;
     padding-bottom: 50px;
@@ -27,14 +36,14 @@ header {
     align-items: center;
 }
 
-/* ƒ^ƒCƒgƒ‹‚Æà–¾•¶‚ğ’†‰›Šñ‚¹ */
+/* ï¿½^ï¿½Cï¿½gï¿½ï¿½ï¿½Æï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ğ’†‰ï¿½ï¿½ï¿½ */
 h2, p {
     color: #444444;
     margin: 30px 0px;
     text-align: center;
 }
 
-/* AI‚Ì‰ñ“š•\¦•”•ª */
+/* AIï¿½Ì‰ñ“š•\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 .answer {
     color: #444444;
     margin: 30px 0px;
@@ -43,7 +52,7 @@ h2, p {
     font-weight: bold;
 }
 
-/* ƒtƒH[ƒ€‘S‘Ì‚ğ’†‰›Šñ‚¹ */
+/* ï¿½tï¿½Hï¿½[ï¿½ï¿½ï¿½Sï¿½Ì‚ğ’†‰ï¿½ï¿½ï¿½ */
 form {
     text-align: center;
     display: flex;
@@ -51,12 +60,12 @@ form {
     align-items: center;
 }
 
-/* ƒtƒ@ƒCƒ‹‘I‘ğƒ‰ƒxƒ‹‚ÌƒfƒUƒCƒ“ */
+/* ï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½ï¿½Ìƒfï¿½Uï¿½Cï¿½ï¿½ */
 .file_choose {
     margin-bottom: 10px;
 }
 
-/* ‰æ‘œƒvƒŒƒrƒ…[‚ğ’†‰›Šñ‚¹ */
+/* ï¿½æ‘œï¿½vï¿½ï¿½ï¿½rï¿½ï¿½ï¿½[ï¿½ğ’†‰ï¿½ï¿½ï¿½ */
 #imagePreview {
     display: block;
     max-width: 80%;
@@ -65,7 +74,7 @@ form {
     margin: 10px auto;
 }
 
-/* ƒtƒbƒ^[‚ÌƒXƒ^ƒCƒ‹‚ğ’†‰›Šñ‚¹ */
+/* ï¿½tï¿½bï¿½^ï¿½[ï¿½ÌƒXï¿½^ï¿½Cï¿½ï¿½ï¿½ğ’†‰ï¿½ï¿½ï¿½ */
 footer {
     background-color: #F7F7F7;
     height: 60px;
@@ -76,7 +85,7 @@ footer {
     text-align: center;
 }
 
-/* ƒRƒs[ƒ‰ƒCƒg‚ÌˆÊ’u’²® */
+/* ï¿½Rï¿½sï¿½[ï¿½ï¿½ï¿½Cï¿½gï¿½ÌˆÊ’uï¿½ï¿½ï¿½ï¿½ */
 small {
     display: block;
     text-align: center;
