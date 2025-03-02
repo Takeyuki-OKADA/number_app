@@ -196,11 +196,11 @@ def upload_file():
 
             # ✅ 偏差値ベースの条件分岐
             if top1_score >= 80:
-                pred_answer = f"これは {classes[top1_idx]} です<br>自信度: {min(top1_score * 1.2, 99):.2f}% → 次点 {classes[top2_idx]}: {top2_score * 1.2:.2f}%"
+                pred_answer = f"これは {classes[top1_idx]} です<br>自信度: {min(top1_score * 1.238, 99):.1f}% → 次点 {classes[top2_idx]}: {top2_score * 1.2:.1f}%"
             elif 77 <= top1_score < 80:
-                pred_answer = f"これは {classes[top1_idx]} かなあ<br>自信度: {top1_score:.2f}% → 次点 {classes[top2_idx]}: {top2_score:.2f}%"
+                pred_answer = f"これは {classes[top1_idx]} かなあ<br>自信度: {top1_score:.1f}% → 次点 {classes[top2_idx]}: {top2_score * 1.2:.1f}%"
             elif 75 <= top1_score < 77:
-                pred_answer = f"これは {classes[top1_idx]} かもしれない(しらんけど)<br>自信度: {top1_score * 0.8:.2f}% → 次点 {classes[top2_idx]}: {top2_score * 0.8:.2f}%"
+                pred_answer = f"これは {classes[top1_idx]} かもしれない(しらんけど)<br>自信度: {top1_score * 0.8:.2f}% → 次点 {classes[top2_idx]}: {top2_score:.2f}%"
             else:
                 pred_answer = "ちゃんと読めませんでした<br>もう一度お願いします"
 
