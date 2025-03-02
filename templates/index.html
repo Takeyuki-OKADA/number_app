@@ -15,6 +15,8 @@
                     const preview = document.getElementById('imagePreview');
                     preview.src = e.target.result;
                     preview.style.display = 'block';
+                    preview.style.width = '200px';  // 拡大表示
+                    preview.style.height = '200px';
                 }
                 reader.readAsDataURL(file);
             }
@@ -43,7 +45,7 @@
         <form method="POST" enctype="multipart/form-data" onsubmit="disableButton()">
             <input id="fileInput" type="file" name="file" onchange="previewImage(event)" required>
             <br>
-            <img id="imagePreview" style="display:none; max-width: 200px; border-radius: 10px; margin: 10px auto;" alt="選択した画像のプレビュー">
+            <img id="imagePreview" style="display:none; width:200px; height:200px; border-radius: 10px; margin: 10px auto;" alt="選択した画像のプレビュー">
             <br>
             <input id="submitButton" class="btn" type="submit" value="送信する" disabled>
         </form>
@@ -53,8 +55,11 @@
         {% if image_path %}
         <script>
             document.addEventListener("DOMContentLoaded", function() {
-                document.getElementById('imagePreview').src = "{{ image_path }}";
-                document.getElementById('imagePreview').style.display = 'block';
+                const preview = document.getElementById('imagePreview');
+                preview.src = "{{ image_path }}";
+                preview.style.display = 'block';
+                preview.style.width = '200px';  // 拡大表示
+                preview.style.height = '200px';
             });
         </script>
         {% endif %}
