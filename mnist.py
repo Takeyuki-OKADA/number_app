@@ -185,8 +185,8 @@ def upload_file():
             deviation_log = ", ".join([f"{classes[i]}: {deviation_scores[i]:.4f}" for i in range(10)])
             logger.info(f"推論結果（偏差値）: {deviation_log}")
 
-            # ✅ 偏差値に1.2倍を掛ける
-            adjusted_scores = deviation_scores * 1.2
+            # ✅ 偏差値に1.24倍を掛ける
+            adjusted_scores = deviation_scores * 1.24
 
             # ✅ 調整後偏差値LOG
             adjusted_log = ", ".join([f"{classes[i]}: {adjusted_scores[i]:.4f}" for i in range(10)])
