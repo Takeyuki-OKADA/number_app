@@ -111,31 +111,33 @@ def upload_file():
         img_array = np.expand_dims(img_array, axis=0)
         img_array = np.expand_dims(img_array, axis=-1)
 
-        try:
-            # ✅ モデルで予測
-            result = model.predict(img_array)
-            probabilities = tf.nn.softmax(result[0]).numpy()
-            top1_idx = np.argmax(probabilities)
-            top2_idx = np.argsort(probabilities)[-2]
-            top1_prob = probabilities[top1_idx] * 100
-            top2_prob = probabilities[top2_idx] * 100
+try:
+    # ✅ モデルで予測
+    result = model.predict(img_array)
+    probabilities = tf.nn.softmax(result[0]).numpy()
+    top1_idx = np.argmax(probabilities)
+    top2_idx = np.argsort(probabilities)[-2]
+    top1_prob = probabilities[top1_idx] * 100
+    top2_prob = probabilities[top2_idx] * 100
 
-            # ✅ 判定結果の表示
-            if top1_prob > 20.0:
-                pred_answer = f"これは {classes[top1_idx]} です<br>確率: {top1_prob:.4f}%"
-            elif 15.0 < top1_prob <= 20.0:
-                pred_answer = f"もしかして {classes[top1_idx]} ですか？<br>{classes[top1_idx]} ({top1_prob:.4f}%) と {classes[top2_idx]} ({top2_prob:.4f}%) で悩んでいます"
-            else:
-                pred_answer = "ちゃんと読めませんでした<br>もう一度お願いします"
+    # ✅ 判定結果の表示（確率は小数点2桁に統一）
+    if top1_prob > 20.0:
+        pred_answer = f"これは {classes[top1_idx]} です<br>確率: {top1_prob:.2f}%"
+    elif 15.0 < top1_prob <= 20.0:
+        pred_answer = f"もしかして {classes[top1_idx]} ですか？<br>{classes[top1_idx]} ({top1_prob:.2f}%) と {classes[top2_idx]} ({top2_prob:.2f}%) で悩んでいます"
+    else:
+        pred_answer = "ちゃんと読めませんでした<br>もう一度お願いします"
 
-            logger.info(f"推論結果: {pred_answer.replace('<br>', ' ')}")
+    # ✅ ログ出力（確率は小数点4桁）
+    logger.info(f"推論結果: {classes[top1_idx]} (確率: {top1_prob:.4f}%), 2位: {classes[top2_idx]} (確率: {top2_prob:.4f}%)")
 
-            # ✅ **画像のパスをテンプレートに渡す**
-            return render_template("index.html", answer=pred_answer, image_path=f"/processed/{processed_image_name}")
+    # ✅ **画像のパスをテンプレートに渡す**
+    return render_template("index.html", answer=pred_answer, image_path=f"/processed/{processed_image_name}")
 
-        except Exception as e:
-            logger.error(f"モデルの推論中にエラーが発生: {e}")
-            return render_template("index.html", answer="推論に失敗しました", image_path=None)
+except Exception as e:
+    logger.error(f"モデルの推論中にエラーが発生: {e}")
+    return render_template("index.html", answer="推論に失敗しました", image_path=None)
+
 
 # ✅ 処理済み画像を提供するエンドポイント
 @app.route("/processed/<filename>")
