@@ -51,8 +51,12 @@
         <div id="result" class="answer" style="font-size: 24px; font-weight: bold;">{{ answer | safe }}</div>
 
         {% if image_path %}
-        <h3>処理済み画像</h3>
-        <img src="{{ image_path }}" alt="Processed Image" style="max-width: 200px; border-radius: 10px; margin: 10px auto; display: block;">
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                document.getElementById('imagePreview').src = "{{ image_path }}";
+                document.getElementById('imagePreview').style.display = 'block';
+            });
+        </script>
         {% endif %}
     </main>
 
