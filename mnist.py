@@ -40,6 +40,44 @@ logger.info("モデルロード完了")
 def clean_filename(filename):
     return re.sub(r"[^\w\d.]", "_", filename).lower()
 
+# ✅ 画像の前処理関数（**追加**）
+def preprocess_image(img, file_name):
+    if img is None:
+        logger.error("preprocess_image: 入力画像が None です！")
+        return None
+
+    # 1️⃣ **グレースケール変換**
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # 2️⃣ **二値化処理**
+    _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+
+    # 3️⃣ **ノイズ除去**
+    binary = cv2.GaussianBlur(binary, (5, 5), 0)
+
+    # 4️⃣ **輪郭抽出**
+    contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if len(contours) == 0:
+        logger.error("preprocess_image: 輪郭が見つかりませんでした！")
+        return None
+
+    # 5️⃣ **最大輪郭の領域を取得**
+    x, y, w, h = cv2.boundingRect(max(contours, key=cv2.contourArea))
+
+    # 6️⃣ **切り取り & 28x28リサイズ**
+    cropped = binary[y:y+h, x:x+w]
+    processed_img = cv2.resize(cropped, (28, 28), interpolation=cv2.INTER_AREA)
+
+    # 7️⃣ **白黒反転**
+    final_img = cv2.bitwise_not(processed_img)
+
+    # 8️⃣ **デバッグ用に保存**
+    debug_path = os.path.join("debug_images", file_name.replace(".", "_") + "_processed.png")
+    cv2.imwrite(debug_path, final_img)
+    logger.info(f"preprocess_image: 画像処理完了 → {debug_path}")
+
+    return final_img
+
 # ✅ ルートパス（画像アップロード・処理・推論）
 @app.route("/", methods=["GET", "POST"])
 def upload_file():
