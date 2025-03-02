@@ -169,6 +169,7 @@ def upload_file():
         img_array = np.expand_dims(img_array, axis=-1)
 
         try:
+            # ✅ 推論の実行
             result = model.predict(img_array)
             probabilities = tf.nn.softmax(result[0]).numpy()
 
@@ -185,8 +186,8 @@ def upload_file():
             deviation_log = ", ".join([f"{classes[i]}: {deviation_scores[i]:.4f}" for i in range(10)])
             logger.info(f"推論結果（偏差値）: {deviation_log}")
 
-            # ✅ 偏差値に1.24倍を掛ける
-            adjusted_scores = deviation_scores * 1.24
+            # ✅ 偏差値に1.2倍を掛ける
+            adjusted_scores = deviation_scores * 1.2
 
             # ✅ 調整後偏差値LOG
             adjusted_log = ", ".join([f"{classes[i]}: {adjusted_scores[i]:.4f}" for i in range(10)])
@@ -194,18 +195,23 @@ def upload_file():
 
             # ✅ 上位2クラスを取得
             top1_idx = np.argmax(adjusted_scores)
-            top2_idx = np.argsort(adjusted_scores)[-2]
+            sorted_indices = np.argsort(adjusted_scores)
+            top2_idx = sorted_indices[-2] if top1_idx != sorted_indices[-2] else sorted_indices[-3]
+            
             top1_score = adjusted_scores[top1_idx]
             top2_score = adjusted_scores[top2_idx]
 
-            # ✅ 表記変更（確率 → 自信度）
-            if top1_score > 60.0:
-                pred_answer = f"これは {classes[top1_idx]} です<br>自信度: {top1_score:.2f}%"
-            elif 50.0 < top1_score <= 60.0:
-                pred_answer = f"もしかして {classes[top1_idx]} ですか？<br>{classes[top1_idx]} ({top1_score:.2f}%) と {classes[top2_idx]} ({top2_score:.2f}%) で悩んでいます"
+            # ✅ 偏差値ベースの条件分岐
+            if top1_score >= 80:
+                pred_answer = f"これは {classes[top1_idx]} です<br>自信度: {min(top1_score * 1.2, 99):.2f}% → 次点 {classes[top2_idx]}: {top2_score * 1.2:.2f}%"
+            elif 77 <= top1_score < 80:
+                pred_answer = f"これは {classes[top1_idx]} かなあ<br>自信度: {top1_score:.2f}% → 次点 {classes[top2_idx]}: {top2_score:.2f}%"
+            elif 75 <= top1_score < 77:
+                pred_answer = f"これは {classes[top1_idx]} かもしれない(しらんけど)<br>自信度: {top1_score * 0.8:.2f}% → 次点 {classes[top2_idx]}: {top2_score * 0.8:.2f}%"
             else:
                 pred_answer = "ちゃんと読めませんでした<br>もう一度お願いします"
 
+            # ✅ レンダリング処理をif-elseの外に配置
             return render_template("index.html", answer=pred_answer, image_path=f"/processed/{os.path.basename(processed_image_name)}")
 
         except Exception as e:
