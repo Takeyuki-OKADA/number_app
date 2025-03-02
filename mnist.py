@@ -172,19 +172,33 @@ def upload_file():
             result = model.predict(img_array)
             probabilities = tf.nn.softmax(result[0]).numpy()
 
-            # 偏差値を計算
+            # ✅ 推論LOG: 各クラスの確率を記録
+            prob_log = ", ".join([f"{classes[i]}: {probabilities[i]:.4f}" for i in range(10)])
+            logger.info(f"推論結果（確率）: {prob_log}")
+
+            # ✅ 偏差値の計算
             mean_prob = np.mean(probabilities)
             std_prob = np.std(probabilities)
             deviation_scores = (probabilities - mean_prob) / std_prob * 10 + 50
-            adjusted_scores = deviation_scores * 1.25  # 1.25倍に調整
 
-            # 上位2クラスを取得
+            # ✅ 偏差値LOG
+            deviation_log = ", ".join([f"{classes[i]}: {deviation_scores[i]:.4f}" for i in range(10)])
+            logger.info(f"推論結果（偏差値）: {deviation_log}")
+
+            # ✅ 偏差値に1.2倍を掛ける
+            adjusted_scores = deviation_scores * 1.2
+
+            # ✅ 調整後偏差値LOG
+            adjusted_log = ", ".join([f"{classes[i]}: {adjusted_scores[i]:.4f}" for i in range(10)])
+            logger.info(f"推論結果（補正後偏差値）: {adjusted_log}")
+
+            # ✅ 上位2クラスを取得
             top1_idx = np.argmax(adjusted_scores)
             top2_idx = np.argsort(adjusted_scores)[-2]
             top1_score = adjusted_scores[top1_idx]
             top2_score = adjusted_scores[top2_idx]
 
-            # 表記変更（確率 → 自信度）
+            # ✅ 表記変更（確率 → 自信度）
             if top1_score > 60.0:
                 pred_answer = f"これは {classes[top1_idx]} です<br>自信度: {top1_score:.2f}%"
             elif 50.0 < top1_score <= 60.0:
@@ -197,6 +211,7 @@ def upload_file():
         except Exception as e:
             logger.error(f"モデルの推論中にエラーが発生: {e}")
             return render_template("index.html", answer="推論に失敗しました", image_path=None)
+
 
 
 @app.route("/processed/<filename>")
