@@ -186,20 +186,13 @@ def upload_file():
             deviation_log = ", ".join([f"{classes[i]}: {deviation_scores[i]:.4f}" for i in range(10)])
             logger.info(f"推論結果（偏差値）: {deviation_log}")
 
-            # ✅ 偏差値に1.2倍を掛ける
-            adjusted_scores = deviation_scores * 1.2
-
-            # ✅ 調整後偏差値LOG
-            adjusted_log = ", ".join([f"{classes[i]}: {adjusted_scores[i]:.4f}" for i in range(10)])
-            logger.info(f"推論結果（補正後偏差値）: {adjusted_log}")
-
-            # ✅ 上位2クラスを取得
-            top1_idx = np.argmax(adjusted_scores)
-            sorted_indices = np.argsort(adjusted_scores)
+            # ✅ 上位2クラスを取得（偏差値で順位付け）
+            top1_idx = np.argmax(deviation_scores)
+            sorted_indices = np.argsort(deviation_scores)
             top2_idx = sorted_indices[-2] if top1_idx != sorted_indices[-2] else sorted_indices[-3]
-            
-            top1_score = adjusted_scores[top1_idx]
-            top2_score = adjusted_scores[top2_idx]
+
+            top1_score = deviation_scores[top1_idx]
+            top2_score = deviation_scores[top2_idx]
 
             # ✅ 偏差値ベースの条件分岐
             if top1_score >= 80:
